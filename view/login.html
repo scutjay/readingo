@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Go-Redis-WebAdmin</title>
+    <link rel="stylesheet" href="/static/css/ele-ui/index.css"/>
+    <style>
+
+    </style>
+</head>
+<body style="background-color: #d9ecff">
+<div id="login-page-main"></div>
+<script src="/static/js/vue.js"></script>
+<script src="/static/js/axios.min.js"></script>
+<script src="/static/js/ele-ui/index.js"></script>
+<script src="/static/js/blueimp-md5.js"></script>
+<script>
+    const LoginPageMain = {
+        data: function () {
+            return {
+                loginFailCount: 0,
+                loginForm: {},
+                stopLoginDialogVisible: false,
+                dialogText: ""
+            }
+        },
+        methods: {
+            tryLogin() {
+                let that = this, loginFailCount = that.$data.loginFailCount;
+                if (loginFailCount > 3) {
+                    that.loginFailedExceedCallback();
+                    return;
+                }
+
+                let params = that.$data.loginForm;
+                axios({
+                    method: 'post',
+                    url: '/auth/login',
+                    data: {
+                        username: md5(params.username),
+                        password: md5(params.password)
+                    }
+                }).then(function (res) {
+                    if (res.data.code === 0) {
+                        that.loginSuccessCallback(that, res.data.data.token);
+                    } else {
+                        that.$data.loginFailCount = loginFailCount + 1;
+                        if (that.$data.loginFailCount > 3) {
+                            that.loginFailedExceedCallback();
+                        } else {
+                            that.loginFailedCallback();
+                        }
+                    }
+                }).catch(function (err) {
+
+                })
+            },
+            loginSuccessCallback(that, token) {
+                localStorage.setItem("go-redis-user", that.$data.loginForm.username);
+                window.location.href="/";
+            },
+            loginFailedExceedCallback() {
+                let that = this;
+                that.$data.dialogText = "Login failed more than 3 times, please refresh the page and retry.";
+                that.$data.stopLoginDialogVisible = true;
+            },
+            loginFailedCallback() {
+                let that = this;
+                that.$data.dialogText = "Login failed, please retry.";
+                that.$data.stopLoginDialogVisible = true;
+            },
+            closeDialog() {
+                let that = this;
+                that.$data.dialogText = "";
+            }
+        },
+        template: `
+        <div style="width: 100%; text-align: center">
+            <img title="Go Redis WebAdmin" src="/static/img/logo.png" style="height: 100px; margin-top: 100px">
+            <div style="width:500px; margin: 30px auto; background-color: white; border-radius: 15px">
+                <div style="padding: 40px 20px">
+                    <el-form label-width="100px" size="medium" style="margin-top: 30px">
+                        <el-form-item label="username">
+                         <el-input v-model="loginForm.username" type="text" placeholder="Input your username"/>
+                     </el-form-item>
+                     <el-form-item label="password">
+                           <el-input v-model="loginForm.password" type="password" placeholder="Input your password" show-password />
+                      </el-form-item>
+                    </el-form>
+                    <el-button type="primary" @click="tryLogin" style="width: 300px; margin-top: 20px" size="large">Login</el-button>
+                </div>
+            </div>
+            <el-dialog v-model="stopLoginDialogVisible" title="Tips" width="30%" @clsoe="closeDialog">
+                <span>{{dialogText}}</span>
+            </el-dialog>
+        </div>
+        `
+    }
+    const app = Vue.createApp(LoginPageMain);
+    app.use(ElementPlus);
+    app.mount('#login-page-main');
+</script>
+</body>
+</html>

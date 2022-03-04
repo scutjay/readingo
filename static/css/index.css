@@ -1,0 +1,28 @@
+.el-row {
+    margin-bottom: 10px;
+}
+.el-row:last-child {
+    margin-bottom: 0;
+}
+.bg-purple {
+    background: #ffffff;
+}
+.grid-content {
+    border-radius: 4px;
+    min-height: 100%;
+}
+.infinite-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.infinite-list .infinite-list-item {
+    display: flex;
+    height: 30px;
+    background: var(--el-color-primary-light-9);
+    margin: 5px;
+    color: var(--el-color-primary);
+}
+.infinite-list .infinite-list-item + .list-item {
+    margin-top: 5px;
+}

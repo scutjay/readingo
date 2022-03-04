@@ -1,0 +1,37 @@
+﻿server:
+  port: 10777
+
+users:
+  - username: admin
+    password: 123456
+    role: readwrite
+  - username: visitor
+    password: 123456
+    role: readonly
+
+redis:
+  - host: 192.168.255.129:6379
+    name: local_redis
+    password: dongcidaci
+    type: redis
+    maxIdle: 2
+    maxActive: 4
+    idleTimout: 120s
+  - host: 10.11.179.144:30064
+    name: otm_redis
+    type: redis
+    maxIdle: 2
+    maxActive: 4
+    idleTimeout: 120s
+
+redisc:
+  - host: ["192.168.255.129:7001"]
+    name: local_redisc
+    maxIdle: 2
+    maxActive: 4
+    idleTimeout: 120s
+  - host: ["10.11.179.182:30079"]
+    name: otm_redisc
+    maxIdle: 2
+    maxActive: 4
+    idleTimeout: 120s
