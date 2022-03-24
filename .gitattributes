@@ -2,6 +2,6 @@
 static/js/ele-ui/* linguist-vendored
 static/js/axios.min.js linguist-vendored
 static/js/blueimp-md5.js linguist-vendored
-static/js/ele-ui/vue.js linguist-vendored
+static/js/vue.js linguist-vendored
 # css
 static/css/ele-ui/*
