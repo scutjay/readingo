@@ -1,6 +1,9 @@
 # Readingo
-
-----
+![issue](https://img.shields.io/github/issues/scutjay/readingo)
+![forks](https://img.shields.io/github/forks/scutjay/readingo)
+![stars](https://img.shields.io/github/stars/scutjay/readingo)
+![license](https://img.shields.io/github/license/scutjay/readingo)
+![size](https://img.shields.io/github/languages/code-size/scutjay/readingo)
 
 Readingo means <b><i>Redis Admin In Golang</i></b>, you could leave the command line alone and use it to
 select/update/remove data in redis database via website system. 
