@@ -22,7 +22,7 @@ func main() {
 }
 
 func LocalAuth(ctx *gin.Context) {
-	if token, err := ctx.Cookie("token"); err == nil && service.CheckIfValidToken(token) {
+	if token, _ := ctx.Cookie("token"); service.CheckIfValidToken(token) {
 		ctx.Next()
 	} else {
 		ctx.JSON(http.StatusOK, model.NewNoPermissionResponse())
@@ -32,7 +32,7 @@ func LocalAuth(ctx *gin.Context) {
 
 func redirectForEmptyPath(r *gin.Engine) {
 	r.GET("/", func(ctx *gin.Context) {
-		if token, err := ctx.Cookie("token"); err == nil && service.CheckIfValidToken(token) {
+		if token, _ := ctx.Cookie("token"); service.CheckIfValidToken(token) {
 			ctx.Redirect(http.StatusFound, "/view/index")
 		} else {
 			ctx.Redirect(http.StatusFound, "/view/login")
