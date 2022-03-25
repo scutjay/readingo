@@ -1,6 +1,7 @@
 package service
 
 import (
+	"readingo/conf"
 	"readingo/constant"
 	"time"
 )
@@ -13,7 +14,11 @@ type allowToken struct {
 }
 
 func CheckIfValidToken(token string) (isValid bool) {
-	if target, ok := allowTokenCache[token]; ok {
+	if conf.Auth.Anonymous {
+		isValid = true
+	} else if token == "" {
+		isValid = false
+	} else if target, ok := allowTokenCache[token]; ok {
 		now := time.Now()
 		lastActiveTime := target.lastActiveTime
 		if lastActiveTime.Add(constant.TokenDurationInServer).After(now) {
@@ -21,7 +26,7 @@ func CheckIfValidToken(token string) (isValid bool) {
 				target.lastActiveTime = now
 				allowTokenCache[token] = target
 			}
-			return true
+			isValid = true
 		} else {
 			delete(allowTokenCache, token)
 		}

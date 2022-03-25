@@ -18,9 +18,9 @@ import (
 var userConfigs = make([]conf.UserConf, 0)
 
 func init() {
-	for _, ur := range conf.Users {
+	for _, ur := range conf.Auth.Users {
 		if ur.Role == "" {
-			ur.Role = "readonly"
+			ur.Role = conf.Auth.DefaultRole
 		}
 		userConfigs = append(userConfigs, conf.UserConf{
 			Username: fmt.Sprintf("%X", md5.Sum([]byte(ur.Username))),
@@ -60,6 +60,21 @@ func Logout(ctx context.Context, req interface{}) (resp interface{}, code int, e
 	token := GetTokenFromCookie(ginCtx)
 	removeTokenFromCache(token)
 	return
+}
+
+func GetCurrentUserRole(ctx context.Context) string {
+	if conf.Auth.Anonymous {
+		return conf.Auth.DefaultRole
+	}
+
+	token := GetTokenFromCookie(ctx)
+	if token == "" {
+		return ""
+	}
+	if tar, ok := allowTokenCache[token]; ok {
+		return tar.role
+	}
+	return ""
 }
 
 func GetTokenFromCookie(ctx context.Context) string {

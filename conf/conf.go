@@ -3,20 +3,21 @@ package conf
 import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"readingo/constant"
 )
 
 var (
 	Server        ServerConf
 	Redis         []RedisConf
 	RedisClusters []RedisClusterConf
-	Users         []UserConf
+	Auth          AuthConf
 )
 
 type config struct {
 	Server        ServerConf         `yaml:"server"`
 	Redis         []RedisConf        `yaml:"redis"`
 	RedisClusters []RedisClusterConf `yaml:"redisc"`
-	Users         []UserConf         `yaml:"users"`
+	Auth          AuthConf           `yaml:"auth"`
 }
 
 type RedisClusterConf struct {
@@ -30,8 +31,8 @@ type RedisClusterConf struct {
 }
 
 type ServerConf struct {
-	Host    string `yaml:"host"`
-	Port    string `yaml:"port"`
+	Host string `yaml:"host"`
+	Port string `yaml:"port"`
 }
 
 type UserConf struct {
@@ -50,6 +51,12 @@ type RedisConf struct {
 	ConnectTimeout string `yaml:"connectTimeout"`
 }
 
+type AuthConf struct {
+	Anonymous   bool       `yaml:"anonymous"`
+	DefaultRole string     `yaml:"defaultRole"`
+	Users       []UserConf `yaml:"users"`
+}
+
 func init() {
 	configFile, err := ioutil.ReadFile("conf.yml")
 	if err != nil {
@@ -61,9 +68,12 @@ func init() {
 	if err != nil {
 		panic("Cannot unmarshal conf.yml, error: " + err.Error())
 	}
+	if conf.Auth.DefaultRole == "" {
+		conf.Auth.DefaultRole = constant.RoleReadOnly
+	}
 
 	Server = conf.Server
 	Redis = conf.Redis
 	RedisClusters = conf.RedisClusters
-	Users = conf.Users
+	Auth = conf.Auth
 }

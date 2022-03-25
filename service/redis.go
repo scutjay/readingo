@@ -14,12 +14,11 @@ func OperateRedis(ctx context.Context, req interface{}) (resp interface{}, code 
 	request := req.(*model.OperateRedisReq)
 
 	request.Action = strings.ToUpper(request.Action)
-	token := GetTokenFromCookie(ctx)
-	if token == "" {
+	role := GetCurrentUserRole(ctx)
+	if role == "" {
 		code = model.NoPermission
 		return
 	}
-	role := getRoleByToken(token)
 	if argsFormat := getArgsFormatByRole(role, request.Action); argsFormat != "" {
 		args := populateArgs(request.Action, argsFormat, request)
 		if len(args) <= 0 {
@@ -55,7 +54,7 @@ func GetDBTree(ctx context.Context, req interface{}) (resp interface{}, code int
 }
 
 func GetSupportedActions(ctx context.Context, req interface{}) (resp interface{}, code int, err error) {
-	return model.GetSupportedActionResp{Actions: getSupportedActions(ctx)}, 0, nil
+	return model.GetSupportedActionResp{Actions: getCommandsByRole(GetCurrentUserRole(ctx))}, 0, nil
 }
 
 func getAllDBHosts(ctx context.Context) []model.HostInfo {
@@ -152,12 +151,6 @@ func splitCommandFormat(format string) []string {
 		return []string{}
 	}
 	return ps
-}
-
-func getSupportedActions(ctx context.Context) []model.Action {
-	token := GetTokenFromCookie(ctx)
-	role := getRoleByToken(token)
-	return getCommandsByRole(role)
 }
 
 func extractRequiredParams(raw string) []string {
