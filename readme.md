@@ -13,15 +13,15 @@ select/update/remove data in redis database via website system.
 
 ### What commands do we support?
 
-We list supported commands in file ./constant/redis.go. There are two maps, one for read commands and the other for
-write commands, corresponds two role in this system: <i>readonly</i> and <i>readwrite</i>.
+We list supported commands in file constant/redis.go. There are two list, one contains read commands and the other one contains write commands.
 
-### How to configure?
+### Two Authentication ways
 
-We provide config samples in folder <i>./sample</i>, and the real ones should be put under the runtime directory.
+When "auth.anonymous" is configured as true, the system could be accessed without login.
 
-- conf.yml
-- log4go.xml
+When "auth.anonymous" is configured as false, user need to log in with username and password. We provide two roles for user:
+- readonly
+- readwrite
 
 ### Application Architecture
 
