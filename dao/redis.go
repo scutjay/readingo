@@ -65,12 +65,13 @@ func RefreshDBTree(ctx context.Context) error {
 			Type: "redis",
 		}
 		partitionInfos := make([]model.PartitionInfo, 0)
+		log4go.Info("Get DB size for host: %s", host)
 		for i := 0; i < 16; i++ {
-			log4go.Info("Get DB size for host[%s@%d] failed", host, i)
 			conn := db[strconv.Itoa(i)]
 			reply, err := conn.Do(ctx, "DBSIZE").Result()
 			if err != nil {
-				return err
+				_ = log4go.Error("Get DB size for host[%s@%d] failed", host, i)
+				break
 			} else {
 				partitionInfo := model.PartitionInfo{
 					Index:  i,
