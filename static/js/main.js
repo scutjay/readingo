@@ -182,7 +182,6 @@ const GoRedisWebAdmin = {
                 url: '/auth/logout',
             }).then(function (res) {});
             localStorage.removeItem("go-redis-user");
-            localStorage.removeItem("go-redis-token");
             window.location.href = "/view/login";
         }
     },
@@ -194,7 +193,7 @@ const GoRedisWebAdmin = {
                     <img title="Go Redis WebAdmin" src="/static/img/logo.png" style="height: 40px">
                 </a>
             </span>
-            <el-sub-menu index="1">
+            <el-sub-menu v-show="userName" index="1">
                 <template #title>{{userName}}</template>
                 <el-menu-item @click="doExit">Logout</el-menu-item>
             </el-sub-menu>
@@ -292,11 +291,6 @@ const GoRedisWebAdmin = {
     `,
     mounted: function () {
         let that = this;
-
-        if (localStorage.getItem("go-redis-token") === undefined) {
-            that.$data.invalidTokenDialogVisible = true;
-        }
-
         that.$data.userName = localStorage.getItem("go-redis-user");
         that.getDBTree();
         that.getSupportedActions();
